@@ -1,46 +1,110 @@
 CSCI S-40 Communication Protocols and Internet Architectures
-Homework 4
+Homework 3
 Brendan Murphy
-bjohnmurphy1984@gmail.com
 
-	•	The US Computer Emergency Readiness Team publishes Technical Cyber Security Alerts and Vulnerability notes to alert users of potential security threats. Alert TA17-181A was published on February 15, 2018 to bring awareness to a new version of the Petya ransomware capable of infecting machines running a Windows operating system. This variant of the Petya malware is referred to as NotPetya and it can render a machine completely inoperable until a ransom is paid. Hiding in plain sight on the Master Boot Record (MBR), NotPetya cloaks itself by enabling encryption on the master file table where it can appear again and again on a host machine even after the ransom has been paid.
-	The virus first gains access to a machine using a backdoor on the Ukrainian tax account 	software, M.E. Doc allowing the software to run commands on the machine and download and 	install further malicious programs. However, the infection does not stop there. The 	sophisticated software attempts to crack other machines on the network using the host`s stolen 	windows credentials. If this method of infection fails, the malware scans the network for 	any potential hosts running an unpatched version of SMBv1 software. In this case, the malicious 	software takes note of the weak system`s IP physical address mapping table and scours the 	network for other devices vulnerable to SMB weakness. SMB (Server Message Block) v1 is an 	ancient Windows protocol used to enable file sharing on local area networks. Enabled by 	default on most machines, this security loophole is a massive threat and can lead to the 	sustained propagation of malware across any basic network configuration. Windows 10 now 	disables this feature by default, my advice to anyone running a Windows PC is to verify that 	you have this feature disabled as soon as possible.
-	The government strongly recommends against paying ransoms as doing so only enriches the 	malicious actors and  does not guarantee system immunization. Sadly, infected machines can be 	considered compromised and may need to be taken off the network indefinitely to avoid the 	risk of infecting other machines on the network. From a networking perspective the best effort 	must be put forth to prevent the spread of viruses like this in order to limit the scope of damage 	when malicious software is able to breach a network. One mechanism that may be useful to	limit damage in events like this are host-based network firewalls. These types of firewalls 	protect against 	threats emanating from within a network and are generally far simpler to setup 	than complex perimeter-based firewalls. Host-based firewalls are crucial for events such as this 	because they protect the healthy machines on the network when the main firewall has already 	been compromised.
-	•	a) The Simple Mail Transfer Protocol (SMTP) specifies the exact format of messages sent from one machine to another. An SMTP message is comprised of an envelope a header and a body. The envelope is separated from the header and the body, usually followed by a DATA command informing the server that the receiving machine is ready for a transfer of the rest of the message. The envelope contains a HELO field that is used to establish communication. It also contains the MAIL FROM: and RCPT TO: fields to indicate who the sending and receiving parties are. The header contains a destination, specified in the TO: field, it also has a From: field indicating the sender. A blank line then indicates the body of the message has begun which has no exact format instead leaving the formatting up the sender.
+	•	(1) Host A's application passes its data off to the layer-4 UDP module where it is encapsulated and a UDP header is added. In the UDP header there are four fields - a protocol port indicating where the message came from, protocol port indicating where the message is to be sent, message length, and a UDP checksum.
 
-b) Multipurpose Internet Mail Extensions (MIME) is an addition to the original email protocol SMTP, created to enable users to exchange data files via email. This is accomplished when the server places a MIME header on the beginning of any web transmission. The header contains the MIME-Version, a Content-type, and a Content-Disposition. Clients then examine the content type in the header to determine an appropriate application to play the media, and find the encoded data within the message to serve up to the media to the application.
+(2) Data is passed to IP layer from the UDP. This data is then encapsulated into the form of an IP message called an IP datagram. This datagram has two parts, a header and a payload. The header contains addressing and control fields like a source address and a destination address, and various control settings like Time to Live (TTL) and a header checksum to guard against transmission corruption. The payload contains the actual data of the message.
 
-c) There are some key differences between Post Office Protocol (POP) and Internet Message Access Protocol (IMAP). When using POP to retrieve an email message from a server, the client sends commands to retrieve the message and can also permanently delete the message from the server. The computer hosting the permanent mailbox must actually run two servers, one SMTP server to accept mail and place it in the user`s inbox, and a secondary POP3 server which allows the user access to delete messages in the mailbox. This is a key difference between POP and IMAP and ensures the mailbox is left in a valid state.
+(3) The IP layer looks at the header of the datagram and sees that the destination IP address is on the same network it is on and determines that the datagram can be delivered directly. It knows they are both on the same network because both start with a 10.0.0.0 IP address. The IP layer now needs a MAC address to build the Ethernet frame, to get this it passes the destination IP address down into the Address Resolution Protocol (ARP) to dynamically bind the IP address to the matching MAC address.
 
-IMAP is a more robust email protocol that enables users some unique features that they will likely not find when using the POP protocol. Users can access their email from multiple locations with the peace of mind that all copies of a message are synchronized and consistent. One other advantage IMAP has over POP is that it allows users the ability to search for a specified string within a message which is useful in long emails.
+(4) The ARP module lets a host find the physical address of a destination host on the same network using only the target`s IP address. First it checks its cache for any recent MAC addresses and finds none because this is the first data sent from host A to host B. Next, Host A broadcasts an ARP request packet to host B and asks it to reply with its MAC address.
 
-d) SMTP relaying is a service that directs email through a 3rd party, often used by businesses to deliver large batches of emails or for automatic transaction emails like delivery confirmations. The biggest reason why this service can by employed maliciously is because it gives spammers the ability to hide their true identity, as the 3rd party relaying service obscures the original identity of the sender.
+(5) In the physical layer, the request is carried out containing the target machine`s IP address. All the hosts on the network receive the ARP request, but only host B responds with an ARP reply that is unicast and contains host B`s IP address and hardware address of MAC_B.
 
-	•	Proxy servers are a crucial part of web architecture because they provide features that decrease latency and minimize the load on servers. A proxy server acts as an intermediary for requests from clients seeking network resources on other servers. This is accomplished using nontransparent or transparent servers that cache web pages and serve up further requests for it using the cache to divert traffic away from the primary server- a key reason a company would implement a proxy server. A second reason might be to restrict access to sites that are inappropriate for employees to access from work machines. Interestingly, Liberty Mutual where I work blocks access to espn.com and Netflix but not FaceBook. 
+(6) The ARP module notes the hardware address of host B and includes it in its cache. It then passes the address to the requesting IP layer.
 
-	•	a) If I am located on Harvard`s campus using a machine to try and access www.yale.edu, and no other machine or DNS at Harvard has ever communicated with a machine at Yale, the following events take place in order to resolve the address for the machine at Yale:
+(7) The IP module passes the datagram to the Ethernet module where it is repackaged into an Ethernet frame including a header and trailer. The header will contain properties including the source address and destination address that was just acquired from the ARP module.
 
-	•	When I enter www.yale.edu into the address bar in Chrome, the software first attempts to locate the IP address for this website within the local machine`s cache. It does not see it there.
-	•	With no IP address available locally, the operating system contacts the Domain Name Server (DNS) configured on the network called the Resolver seeking an A record to determine the IP address.
-	•	The DNS makes several requests to determine the IP address of www.yale.com, first checking a root nameserver.
-	•	The rootnameserver does not reply with the actual IP address, instead it replies with an authority section indicating what machine to ask next.
-	•	The DNS makes another query to the machine provided by the rootnameserver.
-	•	The DNS is provided with a Yale nameserver to contact, which returns the correct A record for www.yale.edu
-	•	The A record indicates the IP address which is provided to my machine on Harvard`s campus
-	•	The operating system of the machine I am working on encapsulates the request from the browser and sends it to the correct IP address on Yale`s system
-
-b) A DNS cache is a temporary database stored on a computer and accessible by the operating system that stores records indicating recent visits to web sites and other places on the internet. The cache acts like a phone book and is visited each time a browser makes a request to access a webpage. To save time and make the process more efficient the computer references the DNS cache and if it finds the matching IP address for the given URL it makes the address resolution process more efficient by eliminating the work necessary to make the address resolution request over the internet.
-
-The caching process is governed by the use of a Time to Live value that is assigned to a given DNS record in conjunction with the default maximum value that the operating system is configured to store the results. These numbers are compared and the lesser number is used to timestamp the record in the DNS cache, this determines how long every record remains available in the DNS cache.
+(8) The Ethernet frame is now ready to ship. It is placed on the network and picked up by host B's Ethernet interface.
 
 
-	•	a) Public IP address of my computer at home: 73.219.193.85
-	•	Autonomous System Number (ASN): AS7922
-b) Two upstream autonomous systems connected to the autonomous system I am part of:
-	•	AS6453: TATA COMMUNICATIONS (AMERICA) INC
-	•	AS6762: TELECOM ITALIA SPARKLE S.p.A
 
-	•	Some Lenovo computers sold in 2015 were discovered to have pre-installed adware software made by Superfish that made them vulnerable to TLS/SSL spoofing attacks without warning the user. The software represents a Man-In-The-Middle (MITM) attack in the sense that it the software intercepts communications between the user and an application and masks its behavior so that it appears is if nothing strange were happening to the user. Specifically, the Superfish software acts as a proxy to intercept the TLS/SSL network traffic then decrypt and examine the data being sent across.  Although it is not uncommon for PCs to ship with preloaded software, it is uncommon for that software to intercept communication to secure websites enabling possible theft of personal information.
-	The Superfish software makes use of third party software from another company called 	Komodia to alter the Windows networking stack and install a new root Certificate Authority (CA) 	which permits Superfish impersonate any website on the Secure Socket Layer (SSL). The Secure 	Socket Layer is a cryptographic protocol that enables communication security over a 	network. The usage of SSL ensures that all data transferred between a web browser and a 	server remains encrypted. This is critical for banking applications and any other sensitive data 	being sent over the wire. Superfish works by creating fake signed certificates in real-time, 	making sensitive websites appear to be secure to the user. Even with the latest anti-virus 	protection running on these Lenovo PCs, there is a tremendous privacy loophole present 	based on the existence of this software. The very nature of having an application monitoring all 	traffic between a user and secure websites like banks and health care companies creates the 	perfect opportunity for a malicious actor to obtain the sensitive data.
-	The presence of a new root Certificate Authority invites another layer of security threats to the 	unlucky purchaser of these Lenovo PCs. This root CA will potentially be the same across 	multitude of Lenovos running the Superfish software. When a root CA is used over and over 	again a data thief can acquire the CA file can perform Man-In-The-Middle (MITM) phishing 	schemes on any untrusted network by presenting itself as a banking application or other secure 	network connection in need of user access credentials. Based on these security threats I 	contend that Lenovo should immediately strip new PCS of the malicious software and ship 	patches to existing Lenovos customers stuck with the application embedded on their machines. 	Lastly, adware and other software like it that positions itself to intercept communication 	between a user and secure internet applications should aggressively be marked as malicious and 	identified and removed as quickly as possible by the user or by anti-virus software.
-	
+	•	(B) (1) Host A's application passes its data off to the layer-4 UDP module where it is encapsulated and a UDP header is added. In the UDP header there are four fields - a protocol port indicating where the message came from, protocol port indicating where the message is to be sent, message length, and a UDP checksum.
+
+(2) Data is passed to IP layer from the UDP. This data is then encapsulated into the form of an IP message called an IP datagram. This datagram has two parts, a header and a payload. The header contains addressing and control fields like a source address and a destination address, and various control settings like Time to Live (TTL) and a header checksum to guard against transmission corruption. The payload contains the actual data of the message.
+
+(3) The IP layer looks at the header of the datagram and sees that the destination IP address is not on the same network it is on and determines that the datagram must first be passed to the router on the network. In order to target the router, it must find its MAC address using the ARP module. The router's IP address is sent to the ARP module in search of its matching MAC address.
+
+(4) The ARP module lets a host find the physical address of a destination host on the same network using only the target`s IP address. First it checks its cache for any recent MAC addresses and finds none because this is the first data sent from host A to Router R. Next, Host A broadcasts an ARP request packet to Router R and asks it to reply with its MAC address.
+
+(5) In the physical layer, the request is carried out containing the target's IP address. All of the hosts on the network receive the ARP request, but only router R responds with an ARP reply that is unicast and contains router R`s IP address and hardware address of MAC_R1.
+
+(6) The ARP module notes the hardware address of router R and includes it in its cache. It then passes the address to the requesting IP layer.
+
+(7) The IP module passes the datagram to the Ethernet module where it is repackaged into an Ethernet frame including a header and trailer. The header will contain properties including the source address and destination address that was just acquired from the ARP module.
+
+(8) The Ethernet frame is now ready to ship. It is placed on the network and picked up by router R.
+
+(9) Router R receives the Ethernet frame and looks at its destination address. It sees that the destination is on the same network as it is one and determines that it must acquire a more concrete destination MAC address using the ARP module so that it can correctly build the Ethernet frame.
+
+(10) The ARP module lets a host find the physical address of a destination host on the same network using only the target`s IP address. First it checks its cache for any recent MAC addresses and finds none because this is the first data sent from router R to host D. Next, router R broadcasts an ARP request packet to host D and asks it to reply with its MAC address.
+
+(11) In the physical layer, the request is carried out containing the target machine`s IP address. All the hosts on the network receive the ARP request, but only host D responds with an ARP reply that is unicast and contains host D`s IP address and hardware address of MAC_D.
+
+(12) The ARP module notes the hardware address of host D and includes it in its cache. It then passes the address to the requesting IP layer.
+
+(13) The IP module passes the datagram to the Ethernet module where it is repackaged into an Ethernet frame including a header and trailer. The header will contain properties including the source address and destination address that was just acquired from the ARP module.
+
+(14) The Ethernet frame is now ready to ship. It is placed on the network and picked up by host D's Ethernet interface.
+
+	•	A tuple, or ordered set of values is can be used as a networking term. The 5-tuple references the five fields necessary to identify a TCP connection. These fields are: payload type, source port, destination port, destination IP address and source IP address.
+
+A user working on a laptop has both an email connection and a web connection open simultaneously, by opening a command prompt and typing netstat the user will see a printout of all active network connections. The user would see the following on the laptop:
+Proto
+Local Address
+Foreign Address
+State
+TCP
+128.103.104.105
+18.19.20.21
+Established
+TCP
+128.103.104.105
+18.19.20.21
+Established
+
+
+
+
+
+And the same command run on the server would output a table like this:
+Proto
+Local Address
+Foreign Address
+State
+TCP
+18.19.20.21
+128.103.104.105
+Established
+TCP
+18.19.20.21
+128.103.104.105
+Established
+
+
+
+
+
+
+	•	a) Distance vector protocols employ the distance and direction of a routing protocol to find the path to its destination. Some common column headers that may exist in a router using the RIPv2 protocol are: port, next hop IP address (which determines the next router that the packet will visit on its journey to its final destination), metric, destination network and mask.
+
+b) For a large private enterprise network I would choose the OSPF (Open Shortest Path Protocol) protocol because of the advantages it has over the RIPv2 protocol. Firstly, when using the OSPF protocol there are no limitations on hop count. This improves speed and performance on the network. Secondly, OSPF uses IP multicast to send link-state updates this ensure less processing on the routers on the network. Lastly, OSPF has better load balancing than RIPv2.
+
+
+	•	The UDP checksum pseudo header contains the source IP address, destination IP address, protocol number and UDP length. The checksum is computed using the IP address information, which presents a problem because this is in violation of the layered protocol rules, however it is necessary indicate that the UDP datagram has in fact been delivered.
+
+	•	TCP includes functionality for both flow control and congestion control. Flow control is important because it prevents a sender from overloading a receiver with too many packets that it is unable to absorb. Congestion control is more in line with preventing a node from over whelming the network with packets. Both of these concepts are necessary to maintain an active network that is not saturated with too many packets.
+
+	•	a) Network Address and Port Translation (NAPT) is a way to remap one IP address to another via modifying the network address information in the IP header contained within packets on their journey to their destination. A NAPT box contains a translation table with information such as an internal IP address, internal port number, destination IP address, destination port number, a translated source port, and a protocol type. The NAT box essentially takes the datagram and stores information about it in the table, then updates the header to make it appear that the source IP address is the NAT box itself.
+b) Some limitations that may arise from my implementation are firstly some basic connectivity issues. NAT provides a basic IPv4 connections but fails to integrate with more advanced features that are now possible such as built-in security, larger address space, and more support for Quality of Service(QOS). A more pressing issue however is the loss of significance of the source IP address and port number. Basically, the destination device does not know the true origin of the incoming packets, which presents a serious security flaw in this configuration.
+
+	•	a) In order to support IPv6 all of the devices on the network need to be capable of supporting IPv6. However, IPv6 devices are assembled using a new process called dual stack that allows IPv6 and IPv4 to run alongside each other simultaneously. Its mainly a software and firmware issue and less of a hardware issue to support IPv6. The biggest software one needs to install is the modem firmware upgrade for DOCSIS 3.0 which is the IPV6 specification for cable modems. With this in place, and an ISP that supports IPv6, your existing IPv4 configuration should be able to support Internet Protocol Version 6.
+b) According to the results from www.testipV6.com my network at work does not support IPv6.
+These were the results of my test:
+	•	Your IPv4 address on the public Internet appears to be 143.115.159.57
+	•	Your Internet Service Provider (ISP) appears to be Liberty Mutual Group 
+	•	No IPv6 address detected [more info]
+	•	You appear to be able to browse the IPv4 Internet only. 
+	•	You will not be able to reach IPv6-only sites. To ensure the best Internet performance and connectivity, ask your ISP about native IPv6. [more info]
+	•	Your DNS server (possibly run by your ISP) appears to have no access to the IPv6 Internet, or is not configured to use it. This may in the future restrict your ability to reach IPv6-only sites.

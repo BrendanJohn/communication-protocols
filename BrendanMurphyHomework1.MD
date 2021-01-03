@@ -1,46 +1,102 @@
 CSCI S-40 Communication Protocols and Internet Architectures
-Homework 4
+Homework 1
 Brendan Murphy
-bjohnmurphy1984@gmail.com
 
-	•	The US Computer Emergency Readiness Team publishes Technical Cyber Security Alerts and Vulnerability notes to alert users of potential security threats. Alert TA17-181A was published on February 15, 2018 to bring awareness to a new version of the Petya ransomware capable of infecting machines running a Windows operating system. This variant of the Petya malware is referred to as NotPetya and it can render a machine completely inoperable until a ransom is paid. Hiding in plain sight on the Master Boot Record (MBR), NotPetya cloaks itself by enabling encryption on the master file table where it can appear again and again on a host machine even after the ransom has been paid.
-	The virus first gains access to a machine using a backdoor on the Ukrainian tax account 	software, M.E. Doc allowing the software to run commands on the machine and download and 	install further malicious programs. However, the infection does not stop there. The 	sophisticated software attempts to crack other machines on the network using the host`s stolen 	windows credentials. If this method of infection fails, the malware scans the network for 	any potential hosts running an unpatched version of SMBv1 software. In this case, the malicious 	software takes note of the weak system`s IP physical address mapping table and scours the 	network for other devices vulnerable to SMB weakness. SMB (Server Message Block) v1 is an 	ancient Windows protocol used to enable file sharing on local area networks. Enabled by 	default on most machines, this security loophole is a massive threat and can lead to the 	sustained propagation of malware across any basic network configuration. Windows 10 now 	disables this feature by default, my advice to anyone running a Windows PC is to verify that 	you have this feature disabled as soon as possible.
-	The government strongly recommends against paying ransoms as doing so only enriches the 	malicious actors and  does not guarantee system immunization. Sadly, infected machines can be 	considered compromised and may need to be taken off the network indefinitely to avoid the 	risk of infecting other machines on the network. From a networking perspective the best effort 	must be put forth to prevent the spread of viruses like this in order to limit the scope of damage 	when malicious software is able to breach a network. One mechanism that may be useful to	limit damage in events like this are host-based network firewalls. These types of firewalls 	protect against 	threats emanating from within a network and are generally far simpler to setup 	than complex perimeter-based firewalls. Host-based firewalls are crucial for events such as this 	because they protect the healthy machines on the network when the main firewall has already 	been compromised.
-	•	a) The Simple Mail Transfer Protocol (SMTP) specifies the exact format of messages sent from one machine to another. An SMTP message is comprised of an envelope a header and a body. The envelope is separated from the header and the body, usually followed by a DATA command informing the server that the receiving machine is ready for a transfer of the rest of the message. The envelope contains a HELO field that is used to establish communication. It also contains the MAIL FROM: and RCPT TO: fields to indicate who the sending and receiving parties are. The header contains a destination, specified in the TO: field, it also has a From: field indicating the sender. A blank line then indicates the body of the message has begun which has no exact format instead leaving the formatting up the sender.
-
-b) Multipurpose Internet Mail Extensions (MIME) is an addition to the original email protocol SMTP, created to enable users to exchange data files via email. This is accomplished when the server places a MIME header on the beginning of any web transmission. The header contains the MIME-Version, a Content-type, and a Content-Disposition. Clients then examine the content type in the header to determine an appropriate application to play the media, and find the encoded data within the message to serve up to the media to the application.
-
-c) There are some key differences between Post Office Protocol (POP) and Internet Message Access Protocol (IMAP). When using POP to retrieve an email message from a server, the client sends commands to retrieve the message and can also permanently delete the message from the server. The computer hosting the permanent mailbox must actually run two servers, one SMTP server to accept mail and place it in the user`s inbox, and a secondary POP3 server which allows the user access to delete messages in the mailbox. This is a key difference between POP and IMAP and ensures the mailbox is left in a valid state.
-
-IMAP is a more robust email protocol that enables users some unique features that they will likely not find when using the POP protocol. Users can access their email from multiple locations with the peace of mind that all copies of a message are synchronized and consistent. One other advantage IMAP has over POP is that it allows users the ability to search for a specified string within a message which is useful in long emails.
-
-d) SMTP relaying is a service that directs email through a 3rd party, often used by businesses to deliver large batches of emails or for automatic transaction emails like delivery confirmations. The biggest reason why this service can by employed maliciously is because it gives spammers the ability to hide their true identity, as the 3rd party relaying service obscures the original identity of the sender.
-
-	•	Proxy servers are a crucial part of web architecture because they provide features that decrease latency and minimize the load on servers. A proxy server acts as an intermediary for requests from clients seeking network resources on other servers. This is accomplished using nontransparent or transparent servers that cache web pages and serve up further requests for it using the cache to divert traffic away from the primary server- a key reason a company would implement a proxy server. A second reason might be to restrict access to sites that are inappropriate for employees to access from work machines. Interestingly, Liberty Mutual where I work blocks access to espn.com and Netflix but not FaceBook. 
-
-	•	a) If I am located on Harvard`s campus using a machine to try and access www.yale.edu, and no other machine or DNS at Harvard has ever communicated with a machine at Yale, the following events take place in order to resolve the address for the machine at Yale:
-
-	•	When I enter www.yale.edu into the address bar in Chrome, the software first attempts to locate the IP address for this website within the local machine`s cache. It does not see it there.
-	•	With no IP address available locally, the operating system contacts the Domain Name Server (DNS) configured on the network called the Resolver seeking an A record to determine the IP address.
-	•	The DNS makes several requests to determine the IP address of www.yale.com, first checking a root nameserver.
-	•	The rootnameserver does not reply with the actual IP address, instead it replies with an authority section indicating what machine to ask next.
-	•	The DNS makes another query to the machine provided by the rootnameserver.
-	•	The DNS is provided with a Yale nameserver to contact, which returns the correct A record for www.yale.edu
-	•	The A record indicates the IP address which is provided to my machine on Harvard`s campus
-	•	The operating system of the machine I am working on encapsulates the request from the browser and sends it to the correct IP address on Yale`s system
-
-b) A DNS cache is a temporary database stored on a computer and accessible by the operating system that stores records indicating recent visits to web sites and other places on the internet. The cache acts like a phone book and is visited each time a browser makes a request to access a webpage. To save time and make the process more efficient the computer references the DNS cache and if it finds the matching IP address for the given URL it makes the address resolution process more efficient by eliminating the work necessary to make the address resolution request over the internet.
-
-The caching process is governed by the use of a Time to Live value that is assigned to a given DNS record in conjunction with the default maximum value that the operating system is configured to store the results. These numbers are compared and the lesser number is used to timestamp the record in the DNS cache, this determines how long every record remains available in the DNS cache.
+	•	A cyclists carries 3 USBs containing a total of 192 gigabytes. In terms of digital storage, 1 gigabyte equals 8000 megabits. Therefore the cyclist is carrying 1,536,000 megabits through traffic at a rate of 20 kilometers per hour. Given this calculation, it takes 10,240 seconds to transmit the same amount of data over a communications line that operates at 150 megabits per second. 
+ 
+This is calculated as follows: 1,536,000 Mb/150 megabits per second  =  10,240 seconds (170.7 minutes roughly)
+ 
+In 10,240 seconds, the courier can ride a distance of approximately 56.83 kilometers.  This is calculated as follows: 20 km per hour = .00555 km per second .00555 km per second  x  10,240 seconds =  56.83 kilometers. Therefore, for a distance of up to 56.83 kilometers, the cyclist carries the data faster.  After that distance has lapsed, the courier is still carrying (transmitting) the same amount of data, but the communications line has now transmitted more data.
 
 
-	•	a) Public IP address of my computer at home: 73.219.193.85
-	•	Autonomous System Number (ASN): AS7922
-b) Two upstream autonomous systems connected to the autonomous system I am part of:
-	•	AS6453: TATA COMMUNICATIONS (AMERICA) INC
-	•	AS6762: TELECOM ITALIA SPARKLE S.p.A
 
-	•	Some Lenovo computers sold in 2015 were discovered to have pre-installed adware software made by Superfish that made them vulnerable to TLS/SSL spoofing attacks without warning the user. The software represents a Man-In-The-Middle (MITM) attack in the sense that it the software intercepts communications between the user and an application and masks its behavior so that it appears is if nothing strange were happening to the user. Specifically, the Superfish software acts as a proxy to intercept the TLS/SSL network traffic then decrypt and examine the data being sent across.  Although it is not uncommon for PCs to ship with preloaded software, it is uncommon for that software to intercept communication to secure websites enabling possible theft of personal information.
-	The Superfish software makes use of third party software from another company called 	Komodia to alter the Windows networking stack and install a new root Certificate Authority (CA) 	which permits Superfish impersonate any website on the Secure Socket Layer (SSL). The Secure 	Socket Layer is a cryptographic protocol that enables communication security over a 	network. The usage of SSL ensures that all data transferred between a web browser and a 	server remains encrypted. This is critical for banking applications and any other sensitive data 	being sent over the wire. Superfish works by creating fake signed certificates in real-time, 	making sensitive websites appear to be secure to the user. Even with the latest anti-virus 	protection running on these Lenovo PCs, there is a tremendous privacy loophole present 	based on the existence of this software. The very nature of having an application monitoring all 	traffic between a user and secure websites like banks and health care companies creates the 	perfect opportunity for a malicious actor to obtain the sensitive data.
-	The presence of a new root Certificate Authority invites another layer of security threats to the 	unlucky purchaser of these Lenovo PCs. This root CA will potentially be the same across 	multitude of Lenovos running the Superfish software. When a root CA is used over and over 	again a data thief can acquire the CA file can perform Man-In-The-Middle (MITM) phishing 	schemes on any untrusted network by presenting itself as a banking application or other secure 	network connection in need of user access credentials. Based on these security threats I 	contend that Lenovo should immediately strip new PCS of the malicious software and ship 	patches to existing Lenovos customers stuck with the application embedded on their machines. 	Lastly, adware and other software like it that positions itself to intercept communication 	between a user and secure internet applications should aggressively be marked as malicious and 	identified and removed as quickly as possible by the user or by anti-virus software.
-	
+	•	I am viewing a web page on the course website from a computer located on the fourth floor of an office building in downtown Boston. The page loads painfully slow at my current download rate of 24.13 Mbps, which is just north of the United States average. I am viewing the page using a browser called Google Chrome, which is accessing the page through the HTTP protocol, an application-level protocol. The application layer then communicates with the internet protocol using the transmission control protocol, which is a transport layer protocol. Next, the network layer takes messages received from the transport layer and places them into a payload with a header. The data link layer takes the payload with the header and packages it up with its own header in a process called encapsulation, and then passes the payload to the physical layer.
+
+ The router must then take this message and determine where to send it. It looks at the destination IP address and sees that it is a server located on Harvard’s campus. The packet is sent through a series of routers until it reaches the Harvard network, where it can access the server. When the packet reaches the final router in the path, it creates an ethernet frame and places it onto the local area network. The frames are converted to 1s and 0s and sent across the network. The encapsulation process takes place again, but in reverse order in a process called de-encapsulation. The messages are received (hopefully) in this process thanks to the network topology between my computer and the server at Harvard.
+
+
+	•	Join 3 IETF mailing lists: 
+	•	HTTP-use;
+	•	 101-Newcomers
+	•	 Proxies
+
+	•	Whenever sequenced data is sent into a network, it does not necessarily get received in the same order that it was sent in. The sliding window protocol receives data out of order and rearranges that data, and when the beginning of the data arrives the window slides to the next position to receive more data. A well-tuned sliding window protocol improves overall network flow by ensuring that the network is completely saturated with packets at all times, because the sender is able to send multiple packets without waiting for an acknowledgement.
+
+Sliding window with a window size of 3:
+
+
+send data 1
+send data 2
+send data 3	receive data 1 send ack 1
+	receive data 2 send ack 2
+	receive data 3 send ack 3
+
+receive ack 1
+receive ack 2
+receive ack 3
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Error control is needed for both data transmission errors and procedural errors. The sliding window protocol can handle errors efficiently by sending error indications back to the sender and requesting it retransmission of the lost packet.
+
+
+Sliding window with a window size of 3 handling error:
+
+send data 1
+send data 2
+send data 3
+                                                                                                                        receive data 1 send ack 1
+                                                                                                                          
+                                                                                                                        data 2 not received
+                                                                                                                     
+                                                                                                                         receive data 3 send ack 3
+                                                                                                                         requests resend data    
+
+
+
+receive resend 
+request
+
+resend data 2
+                                                                                                                        
+
+                                                                                                                         receive data 2 send ack 2
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	•	The computer in my home is connected to the internet via an Ethernet cable connected to a cable modem. Modem is a shortened way of saying 'modulates and demodulates' as this is the primary purpose of the device when handling data signals. Data coming from the network to the user is called downstream, conversely data from the user to the network is called upstream. These channels are separated using Frequency Division Multiplexing (FDM). FDM is a technique used to split the total bandwidth of a communication bandwidth into non-overlapping bands. For example, the coaxial cable used to bring TV and internet into my home has a bandwidth of about 1000 MHz, but the pass band of each television channel is only 6 MHz resulting in a tremendous amount of free space for additional channels and data.
+
+To transmit data over the cable network, my computer takes advantage of a transmission method called Time-Division Multiplexing (TDM). In this case my modem transmits a packet to the head-end and requests space to transmit. Precise scheduling of packet transmission is necessary to get high utilization and good power control to avoid any system failures. TDM is a form of multiplexing that dates back to the late 19th century where its original intention was telegraphy systems, however its primary use today is in telephony systems.
+
+In contrast to a coaxial cable network, a DSL network or Digital Subscriber Line (originally called a digital subscriber loop) is used to transmit internet services through traditional phone lines. It was originally thought to be impossible to transmit data through twisted pair telephone cables, however, this was proved possible thanks to a phone line in the United Kingdom that was able to support the transmission of 4 MHz of data between a BBC broadcast station and a transmission station ten miles away. Although DSL is a less popular means of internet service in 2018, 90% of the United States can access DSL thanks to the impressive phone line infrastructure that has been in place since the growth of AT&T and other massive telephone conglomerates.
+
+	•	Answers to question 6 below
+	•	A Virtual Circuit or VC is used to describe the connection between a host and a packet switching network. The connections appears to be physical and discreet, however is actually a shared pool of circuit resources used to support multiple users.
+	•	The difference between connection-oriented communication and connectionless communication is the in a connectionless communication two devices can talk to each without any kind of security handshake. This is beneficial for devices like walkie talkies and fm radio. The downside is that because no security is in place like in a connection-oriented network its makes it possible to have data stolen because there is no security protocols between the devices on the network.
